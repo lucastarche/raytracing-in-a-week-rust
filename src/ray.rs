@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use crate::{math_utils::random_unit_vector, vec3::*};
+use crate::{materials::*, vec3::*};
 
 #[derive(Clone, Copy)]
 pub struct Ray {
@@ -78,37 +78,5 @@ impl Hittable for Sphere {
 
         let normal = (ray.at(root) - self.centre) / self.radius;
         Some(HitRecord::new(normal, root, self.material.clone(), &ray))
-    }
-}
-
-pub trait Material {
-    fn scatter(&self, ray_in: &Ray, record: &HitRecord) -> Option<(Ray, Colour)>;
-}
-
-pub struct Diffuse {
-    pub albedo: Colour,
-}
-
-impl Material for Diffuse {
-    fn scatter(&self, _ray_in: &Ray, record: &HitRecord) -> Option<(Ray, Colour)> {
-        let scatter_direction = record.normal + random_unit_vector();
-
-        if scatter_direction.near_zero() {
-            Some((
-                Ray {
-                    origin: record.p,
-                    dir: record.normal,
-                },
-                self.albedo,
-            ))
-        } else {
-            Some((
-                Ray {
-                    origin: record.p,
-                    dir: scatter_direction,
-                },
-                self.albedo,
-            ))
-        }
     }
 }

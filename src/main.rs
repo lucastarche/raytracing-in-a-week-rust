@@ -1,4 +1,5 @@
 mod camera;
+mod materials;
 mod math_utils;
 mod ray;
 mod vec3;
@@ -6,6 +7,7 @@ mod vec3;
 use std::{f64::INFINITY, sync::Arc, u64};
 
 use camera::*;
+use materials::*;
 use math_utils::*;
 use ray::*;
 use vec3::*;
@@ -70,23 +72,39 @@ fn main() {
     let camera = Camera::new();
 
     let mut world: Vec<Arc<dyn Hittable>> = Vec::new();
-    let green = Arc::new(Diffuse {
-        albedo: Colour::new(0.0, 1.0, 0.0),
-    });
-    let red = Arc::new(Diffuse {
-        albedo: Colour::new(1.0, 0.0, 0.0),
-    });
 
-    world.push(Arc::new(Sphere {
-        centre: Point3::new(0.0, 0.0, -1.0),
-        radius: 0.5,
-        material: red.clone(),
-    }));
+    let material_ground = Arc::new(Diffuse {
+        albedo: Colour::new(0.8, 0.8, 0.0),
+    });
+    let material_center = Arc::new(Diffuse {
+        albedo: Colour::new(0.7, 0.3, 0.3),
+    });
+    let material_left = Arc::new(Metal {
+        albedo: Colour::new(0.8, 0.8, 0.8),
+    });
+    let material_right = Arc::new(Metal {
+        albedo: Colour::new(0.8, 0.6, 0.2),
+    });
 
     world.push(Arc::new(Sphere {
         centre: Point3::new(0.0, -100.5, -1.0),
         radius: 100.0,
-        material: green.clone(),
+        material: material_ground.clone(),
+    }));
+    world.push(Arc::new(Sphere {
+        centre: Point3::new(0.0, 0.0, -1.0),
+        radius: 0.5,
+        material: material_center.clone(),
+    }));
+    world.push(Arc::new(Sphere {
+        centre: Point3::new(-1.0, 0.0, -1.0),
+        radius: 0.5,
+        material: material_left.clone(),
+    }));
+    world.push(Arc::new(Sphere {
+        centre: Point3::new(1.0, 0.0, -1.0),
+        radius: 0.5,
+        material: material_right.clone(),
     }));
 
     println!("P3 {} {} 255", WIDTH, HEIGHT);

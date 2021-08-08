@@ -50,6 +50,10 @@ impl Vec3 {
         static EPS: f64 = 1e-8;
         f64::abs(self.x) < EPS && f64::abs(self.y) < EPS && f64::abs(self.z) < EPS
     }
+
+    pub fn reflect(&self, rhs: &Vec3) -> Vec3 {
+        *self - 2.0 * Vec3::dot(self, rhs) * *rhs
+    }
 }
 
 impl Add for Vec3 {
