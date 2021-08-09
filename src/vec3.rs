@@ -1,6 +1,6 @@
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
-use crate::math_utils::*;
+use rand::{thread_rng, Rng};
 
 #[derive(Clone, Copy)]
 pub struct Vec3 {
@@ -10,8 +10,8 @@ pub struct Vec3 {
 }
 
 impl Vec3 {
-    pub fn new(x: f64, y: f64, z: f64) -> Vec3 {
-        Vec3 { x, y, z }
+    pub fn new(x: f64, y: f64, z: f64) -> Self {
+        Self { x, y, z }
     }
 
     pub fn len(&self) -> f64 {
@@ -40,9 +40,9 @@ impl Vec3 {
 
     pub fn random_range(r_min: f64, r_max: f64) -> Vec3 {
         Vec3 {
-            x: random_double_range(r_min, r_max),
-            y: random_double_range(r_min, r_max),
-            z: random_double_range(r_min, r_max),
+            x: thread_rng().gen_range(r_min..r_max),
+            y: thread_rng().gen_range(r_min..r_max),
+            z: thread_rng().gen_range(r_min..r_max),
         }
     }
 
@@ -51,8 +51,15 @@ impl Vec3 {
         f64::abs(self.x) < EPS && f64::abs(self.y) < EPS && f64::abs(self.z) < EPS
     }
 
-    pub fn reflect(&self, rhs: &Vec3) -> Vec3 {
-        *self - 2.0 * Vec3::dot(self, rhs) * *rhs
+    pub fn reflect(&self, n: &Vec3) -> Vec3 {
+        *self - 2.0 * Vec3::dot(self, n) * *n
+    }
+
+    pub fn refract(&self, n: &Vec3, etai_over_etat: f64) -> Vec3 {
+        let cos_theta = f64::min(Vec3::dot(&-*self, n), 1.0);
+        let r_out_perp = etai_over_etat * (*self + cos_theta * *n);
+        let r_out_parallel = -f64::sqrt(f64::abs(1.0 - r_out_perp.len_squared())) * *n;
+        r_out_perp + r_out_parallel
     }
 }
 
@@ -168,16 +175,20 @@ impl DivAssign<f64> for Vec3 {
     }
 }
 
+impl ToString for Vec3 {
+    fn to_string(&self) -> String {
+        format!("{} {} {}", self.x, self.y, self.z)
+    }
+}
+
 pub type Point3 = Vec3;
 pub type Colour = Vec3;
 
-impl ToString for Colour {
-    fn to_string(&self) -> String {
-        format!(
-            "{} {} {}",
-            (255.999f64 * self.x) as i64,
-            (255.999f64 * self.y) as i64,
-            (255.999f64 * self.z) as i64
-        )
-    }
+pub fn colour_string(colour: &Colour) -> String {
+    format!(
+        "{} {} {}",
+        (255.999f64 * colour.x) as i64,
+        (255.999f64 * colour.y) as i64,
+        (255.999f64 * colour.z) as i64
+    )
 }

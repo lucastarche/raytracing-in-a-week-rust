@@ -9,8 +9,8 @@ pub struct Ray {
 }
 
 impl Ray {
-    pub fn new(origin: Point3, dir: Vec3) -> Ray {
-        Ray { origin, dir }
+    pub fn new(origin: Point3, dir: Vec3) -> Self {
+        Self { origin, dir }
     }
 
     pub fn at(&self, t: f64) -> Point3 {
@@ -27,8 +27,8 @@ pub struct HitRecord {
 }
 
 impl HitRecord {
-    pub fn new(normal: Vec3, t: f64, material: Arc<dyn Material>, ray: &Ray) -> HitRecord {
-        let mut ans = HitRecord {
+    pub fn new(normal: Vec3, t: f64, material: Arc<dyn Material>, ray: &Ray) -> Self {
+        let mut ans = Self {
             p: ray.at(t),
             normal,
             t,

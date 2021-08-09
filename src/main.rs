@@ -79,11 +79,12 @@ fn main() {
     let material_center = Arc::new(Diffuse {
         albedo: Colour::new(0.7, 0.3, 0.3),
     });
-    let material_left = Arc::new(Metal {
-        albedo: Colour::new(0.8, 0.8, 0.8),
+    let material_left = Arc::new(Dielectric {
+        refraction_index: 1.5,
     });
     let material_right = Arc::new(Metal {
         albedo: Colour::new(0.8, 0.6, 0.2),
+        fuzz: 0.1,
     });
 
     world.push(Arc::new(Sphere {
@@ -113,17 +114,18 @@ fn main() {
         for i in 0..WIDTH {
             let mut colour = Colour::new(0.0, 0.0, 0.0);
             for _ in 0..SAMPLES_PER_PIXEL {
-                let u = (i as f64 + random_double()) / (WIDTH - 1) as f64;
-                let v = ((HEIGHT - j - 1) as f64 + random_double()) / (HEIGHT - 1) as f64;
+                let u = (i as f64 + rand::random::<f64>()) / (WIDTH - 1) as f64;
+                let v = ((HEIGHT - j - 1) as f64 + rand::random::<f64>()) / (HEIGHT - 1) as f64;
                 let ray = camera.get_ray(u, v);
                 colour += ray_colour(&world, &ray, MAX_DEPTH);
             }
+
             colour /= SAMPLES_PER_PIXEL as f64;
             colour.x = f64::sqrt(colour.x);
             colour.y = f64::sqrt(colour.y);
             colour.z = f64::sqrt(colour.z);
 
-            println!("{}", colour.to_string());
+            println!("{}", colour_string(&colour));
         }
     }
     eprintln!("Done!");
