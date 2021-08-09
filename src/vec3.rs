@@ -38,6 +38,14 @@ impl Vec3 {
         }
     }
 
+    pub fn random() -> Vec3 {
+        Vec3 {
+            x: rand::random(),
+            y: rand::random(),
+            z: rand::random(),
+        }
+    }
+
     pub fn random_range(r_min: f64, r_max: f64) -> Vec3 {
         Vec3 {
             x: thread_rng().gen_range(r_min..r_max),

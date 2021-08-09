@@ -22,3 +22,12 @@ pub fn random_in_unit_sphere() -> Vec3 {
 pub fn random_unit_vector() -> Vec3 {
     random_in_unit_sphere().normalized()
 }
+
+pub fn random_in_unit_disk() -> Vec3 {
+    loop {
+        let p = Vec3::new(rand::random(), rand::random(), 0.0);
+        if p.len_squared() < 1.0 {
+            return p;
+        }
+    }
+}
